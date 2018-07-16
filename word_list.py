@@ -6,6 +6,15 @@
 
     Returns: set of all words, each word is a string
 """
+
+from enum import Enum
+
+class FindWord(Enum):
+    NOT_FOUND = 1
+    WORD_FOUND = 2
+    PREFIX_FOUND = 3
+
+
 class WordListSet:
 
     def __init__(self, filename):
@@ -17,8 +26,8 @@ class WordListSet:
 
     def find_word(self, word):
         if word in self.word_list:
-            return "WORD_FOUND"
-        return "PREFIX_FOUND"
+            return FindWord.WORD_FOUND
+        return FindWord.NOT_FOUND
 
 
     def no_of_words(self):
@@ -129,16 +138,16 @@ class WordListTree:
             if search.ch == word[0]:
                 if word_len == 1:
                     if search.is_word:
-                        return "WORD_FOUND"
+                        return FindWord.WORD_FOUND
                     else:
-                        return "PREFIX_FOUND"
+                        return FindWord.PREFIX_FOUND
                 else:
                     return self._find_word(search.next, word[1:])
             elif search.ch > word[0]:
-                return "NOT_FOUND"
+                return FindWord.NOT_FOUND
             # else - search.ch < word[0] - continue
             search = search.adjacent
-        return "NOT_FOUND"
+        return FindWord.NOT_FOUND
 
     def _find_word(self, search_tree, word):
         word_len = len(word)
@@ -147,17 +156,17 @@ class WordListTree:
             if search.ch == word[0]:
                 if word_len == 1:
                     if search.is_word:
-                        return "WORD_FOUND"
+                        return FindWord.WORD_FOUND
                     else:
-                        return "PREFIX_FOUND"
+                        return FindWord.PREFIX_FOUND
                 else:
                     return self._find_word(search.next, word[1:])
             elif search.ch > word[0]:
-                return "NOT_FOUND"
+                return FindWord.NOT_FOUND
 
             # else - search.ch < word[0] - continue
             search = search.adjacent
-        return "NOT_FOUND"
+        return FindWord.NOT_FOUND
 
     def no_of_words(self):
         return self._no_of_words

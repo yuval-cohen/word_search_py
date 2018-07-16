@@ -37,22 +37,22 @@ a z z z
 
 contains the words "be", "ha", and "ah". It should not contain "bee" or "ebb" or "he" or "hah".
 
-Your program prints any word found to the standard output.
-
-Your program assumes that the word list file contains no duplicated words and that all inputs are valid.
-
-Your program is not tolerant to word files that contain a mixture of upper and lower case
+The program prints any word found to the standard output, 
+it assumes that the word list file contains no duplicated words and that all inputs are valid.
+The program is not tolerant to word files that contain a mixture of upper and lower case
 words and of words that contain punctuation.
 
-The program expects the grid as a parameter to WordSearch and print the results to the standard output. 
+The program expects the word-list file and the grid as n words each word with m characters and print the results to the standard output. 
 To run simply type:
-python main.py
+python word_search_app.py <word-list-file> <gird>
+e.g.
+python word_search_app.py word.list abc ret zov shv
 
 The output is a list of found words separated by newlines.
 
 Comments:
 (1) in word_search.py:
-    You can choose to import WordList class from either WordListTree or from WordListSet:
-    // by comment in/out one of the following import:
+    You can choose to import either WordListTree or from WordListSet as WordList:
     from word_list import WordListTree as WordList
-    #from word_list import WordListSet as WordList
+    or
+    from word_list import WordListSet as WordList

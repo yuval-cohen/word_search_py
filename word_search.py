@@ -1,8 +1,4 @@
-
-# can either import WordListTree or WordListSet as WordList
-from word_list import WordListTree as WordList
-#from word_list import WordListSet as WordList
-
+from word_list import WordListTree as WordList, FindWord
 
 class WordSearch:
 
@@ -42,8 +38,8 @@ class WordSearch:
 
     def _print_found_words_from_prefix(self, word, i, j, grid_ctrl):
         word_found = self._word_list.find_word(word)
-        if word_found == "WORD_FOUND" or word_found == "PREFIX_FOUND":
-            if word_found == "WORD_FOUND":
+        if word_found == FindWord.WORD_FOUND or word_found == FindWord.PREFIX_FOUND:
+            if word_found == FindWord.WORD_FOUND:
                 self._print_func(word)
                 self._found_words += 1
 
