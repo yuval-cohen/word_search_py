@@ -6,7 +6,7 @@ The grid should be given as a list of n m-letter strings, e.g. (n = m = 4):
 
 grid = ["abcd", "edfg", hijk", "lmno"]
 
-This represents the folling grid:
+This represents the following grid:
 a b c d
 e d f g
 h i j k
