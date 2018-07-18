@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 """A program searches and print all words that can be constructed
 from a grid of letters in an input word-list UTF-8 text file.
 By default, the programs prints the words to the standard output.
