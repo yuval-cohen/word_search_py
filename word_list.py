@@ -1,40 +1,87 @@
-"""Reads list of words from a file.
+"""This module contains two class of WordList:
+(1) WordListSet and (2) WordListTree
+although implemented differently, they provide the same functionality.
+Both WordList classes provide interface to find a word from an
+input word-list UTF-8 text file.
+The input word-list UTF-8 text file is a file contains list of words
+each word in a single line.
 
-    Args:
-        filename: an input text file in UTF-8 with list of words
-                  each word in one line
+Example:
+    word.list file:
+    I
+    go
+    to
+    school
+    every
+    day
+    ...
+    from word_list import WordListSet (or WordListTree) as WordList
+    word_list = WordList("word.list")
+    if (word_list.find_word("school") == FindWord.WORD_FOUND)
+        print ("The word 'school' is found in word.list")
 
-    Returns: set of all words, each word is a string
+Attributes:
+    none.
+
 """
 
 from enum import Enum
 
 class FindWord(Enum):
-    NOT_FOUND = 1
-    WORD_FOUND = 2
-    PREFIX_FOUND = 3
+    """Enum class for the return value of WordListXXX.find_word."""
+    WORD_FOUND = 1
+    PREFIX_FOUND = 2
+    NOT_FOUND = 3
 
 
 class WordListSet:
+    """A class for finding a word in an input word-list UTF-8 text file.
+
+    Attributes:
+        _word_list (set) - a set that contains all words from the input
+            word-list text file.
+    """
 
     def __init__(self, filename):
+        """Inits WordListSet from an input word-list text file.
+
+        Args:
+            filename (str) - full path input word-list text file.
+        """
         with open(filename, mode="rt", encoding="utf-8") as in_file:
-            self.word_list = set()
+            self._word_list = set()
             for word in in_file:
-                self.word_list.add(word.rstrip())  # strip the newline at the end
+                self._word_list.add(word.rstrip())  # strip the newline at the end
 
 
     def find_word(self, word):
-        if word in self.word_list:
+        """Finds a word from word list.
+
+        Args:
+            word (str): word to be found.
+
+        Returns:
+            FindWord.WORD_FOUND if word found,
+            FindWord.PREFIX_FOUND otherwise.
+        """
+        if word in self._word_list:
             return FindWord.WORD_FOUND
-        return FindWord.NOT_FOUND
+        return FindWord.PREFIX_FOUND
 
 
     def no_of_words(self):
-        return len(self.word_list)
+        """Returns no of words in word-list.
+
+        Args:
+            none.
+
+        Returns:
+            (int) no of words.
+        """
+        return len(self._word_list)
 
 
-class CharNode:
+class _CharNode:
 
     def __init__(self, ch, is_word=False, adjacent=None, next=None):
         self.ch = ch
@@ -44,8 +91,21 @@ class CharNode:
 
 
 class WordListTree:
+    """A class for finding a word in an input word-list UTF-8 text file.
+
+    Attributes:
+        _char_tree (_CharNode) - tree of characters that contains all words.
+        _no_of_words (int) - no. of words in word-list
+        _no_of_char_nodes (int) - no of character nodes in _char_tree
+                                  (for statistics).
+    """
 
     def __init__(self, filename):
+        """Inits WordListTree from an input word-list text file.
+
+        Args:
+            filename (str) - full path input word-list text file.
+        """
         self._char_tree = None
         self._no_of_words = 0
         self._no_of_char_nodes = 0
@@ -63,7 +123,7 @@ class WordListTree:
 
             # no characters exist in this depth
             if nxt_search == None:
-                char_node = CharNode(word[i], is_word)
+                char_node = _CharNode(word[i], is_word)
                 self._no_of_char_nodes += 1
                 nxt_search = char_node
 
@@ -80,7 +140,8 @@ class WordListTree:
             else:
                 char_added_to_adjacent = False
 
-                # search ADJACENT list to find the correct spot to add character to tree (if character does not exist)
+                # search ADJACENT list to find the correct spot to add
+                # character to tree (if character does not exist)
                 # ADJACENT list is kept sorted by character value
                 adj_search = nxt_search
                 while not char_added_to_adjacent:
@@ -89,12 +150,12 @@ class WordListTree:
                     if adj_search.ch == word[i]:
                         nxt_search_prev = adj_search
                         nxt_search = nxt_search_prev.next
-                        char_added_to_adjacent = True # character already exists - do nothing
+                        char_added_to_adjacent = True  # character already exists - do nothing
 
                     elif adj_search.ch < word[i]:
                         if adj_adj_search == None:
                             # add character to the end of ADJACENT list
-                            char_node = CharNode(word[i], is_word)
+                            char_node = _CharNode(word[i], is_word)
                             self._no_of_char_nodes += 1
 
                             adj_search.adjacent = char_node
@@ -104,7 +165,7 @@ class WordListTree:
 
                         elif adj_adj_search.ch > word[i]:
                             # add character between adj_search and adj_adj_search
-                            char_node = CharNode(word[i], is_word)
+                            char_node = _CharNode(word[i], is_word)
                             self._no_of_char_nodes += 1
 
                             adj_search.adjacent = char_node
@@ -118,7 +179,7 @@ class WordListTree:
 
                     else: # adj_search.ch > word[i]
                         # add character at the start of ADJACENT list
-                        char_node = CharNode(word[i], is_word)
+                        char_node = _CharNode(word[i], is_word)
                         self._no_of_char_nodes += 1
 
                         nxt_search_prev.next = char_node
@@ -132,6 +193,17 @@ class WordListTree:
 
 
     def find_word(self, word):
+        """Finds a word from word list.
+
+        Args:
+            word (str): word to be found.
+
+        Returns:
+            FindWord.WORD_FOUND - word found
+            FindWord.PREFIX_FOUND - word is found as a prefix
+                of another word
+            FindWord.NOT_FOUND - otherwise (word not found)
+        """
         word_len = len(word)
         search = self._char_tree
         while search != None:
@@ -169,4 +241,12 @@ class WordListTree:
         return FindWord.NOT_FOUND
 
     def no_of_words(self):
+        """Returns no of words in word-list.
+
+        Args:
+            none.
+
+        Returns:
+            (int) no of words.
+        """
         return self._no_of_words
